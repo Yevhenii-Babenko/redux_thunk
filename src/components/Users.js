@@ -1,31 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadTweets, loadUsers } from '../app/reduxStore/actions/actions'
+import { tweets, users } from '../app/reduxStore/selectors/selectors';
+
+
 
 export default function Users() {
-  const [posts, setPosts] = useState({
-    data: [],
-  });
+  const posts = useSelector(tweets);
+  const getUsers = useSelector(users);
+  const dispatch = useDispatch();
   useEffect(() => {
-    const fetchPosts = async () => {
-      fetch('https://gorest.co.in/public/v1/posts')
-        .then(data => data.json())
-        .then(json => {
-          console.log('data in json',json)
-          return setPosts(json)
-        })
-    }
-    fetchPosts();
-  }, [])
-  console.log('data after setPosts',posts)
+    dispatch(loadTweets())
+    dispatch(loadUsers())
+
+  }, [dispatch])
   return ( 
     <div className="users-container">
       <h1>Users</h1>
-      { posts.data.map((post, index) => (
-         <div className="post-container" key={index}>
-            <h2>{post.title}</h2>
-            <p>{post.body}</p>
-          </div>)
-          )
-      }
+      {console.log('this is posts', posts, getUsers)}
+      {posts.map((post)=>post.title)}
+      {getUsers.map((user) => <p>{user.id}</p>)}
     </div>
   );
 }
